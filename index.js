@@ -16,16 +16,63 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.yba5w.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send({ message: 'UnAuthorized access' });
+  }
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+    if (err) {
+      return res.status(403).send({ message: 'Forbidden access' })
+    }
+    req.decoded = decoded;
+    next();
+  });
+}
+
+
 async function run(){
   try{
     await client.connect();
     const serviceCollection=client.db('computerhub').collection('tools');
     const userCollection = client.db('computerhub').collection('users');
     const orderCollection = client.db('computerhub').collection('order');
+
+    const verifyAdmin = async (req, res, next) => {
+      const requester = req.decoded.email;
+      const requesterAccount = await userCollection.findOne({ email: requester });
+      if (requesterAccount.role === 'admin') {
+        next();
+      }
+      else {
+        res.status(403).send({ message: 'forbidden' });
+      }
+    }
+
+
+
     app.get('/service',async(req,res)=>{
       const query={};
       const cursor=serviceCollection.find(query);
       const result=await cursor.toArray();
+      res.send(result);
+    })
+
+    app.get('/user',verifyJWT, async (req, res) => {
+      const users = await userCollection.find().toArray();
+      res.send(users);
+    });
+
+
+    app.put('/user/admin/:email',verifyJWT,verifyAdmin, async (req, res) => {
+      const email = req.params.email;
+      
+      const filter = { email: email };
+      const updateDoc = {
+        $set: { role: 'admin' },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
       res.send(result);
     })
 
@@ -62,6 +109,16 @@ async function run(){
       const result=await serviceCollection.updateOne(filter,updatedDoc,options)
       res.send(result)
     })
+
+// admin
+    app.get('/admin/:email',async(req,res)=>{
+      const email=req.params.email;
+      const user=await userCollection.findOne({email:email});
+      const isAdmin=user.role==='admin';
+      res.send({admin: isAdmin})
+
+    })
+
 
     //order
 
