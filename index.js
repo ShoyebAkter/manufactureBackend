@@ -39,6 +39,7 @@ async function run(){
     const userCollection = client.db('computerhub').collection('users');
     const orderCollection = client.db('computerhub').collection('order');
 
+
     const verifyAdmin = async (req, res, next) => {
       const requester = req.decoded.email;
       const requesterAccount = await userCollection.findOne({ email: requester });
@@ -56,6 +57,12 @@ async function run(){
       const query={};
       const cursor=serviceCollection.find(query);
       const result=await cursor.toArray();
+      res.send(result);
+    })
+
+    app.post('/service',verifyJWT,verifyAdmin,async(req,res)=>{
+      const service = req.body;
+      const result = await serviceCollection.insertOne(service);
       res.send(result);
     })
 
@@ -110,6 +117,22 @@ async function run(){
       res.send(result)
     })
 
+    // app.get('/order',verifyJWT, async(req,res)=>{
+    //   const email=req.query.email;
+    //   const decodedEmail=req.decoded.email;
+
+    //   if(user==decodedEmail){
+    //     const query={email:user};
+    //     const bookings= await orderCollection.find(query).toArray();
+    //     return res.send(bookings);
+    //   }
+    //   else{
+    //     return res.status(403).send({message:'forbidden access'});
+    //   }
+    // })
+
+
+
 // admin
     app.get('/admin/:email',async(req,res)=>{
       const email=req.params.email;
@@ -122,18 +145,18 @@ async function run(){
 
     //order
 
-    app.put('/service/:id',async(req,res)=>{
-      const id=req.params.id
-      const updatedProduct=req.body
-      const filter ={ _id:ObjectId(id)}
-      const options = { upsert: true }
-      const updatedDoc={
-        $set:{
-          quantity: updatedProduct.quantity
-        }
+    app.get('/order',verifyJWT, async(req,res)=>{
+      const email=req.query.email;
+      const decodedEmail=req.decoded.email;
+      
+      if(email===decodedEmail){
+        const query={email:email};
+        const orders=await orderCollection.find(query).toArray();
+        res.send(orders)
       }
-      const result=await serviceCollection.updateOne(filter,updatedDoc,options)
-      res.send(result)
+      else{
+        return res.status(403).send({message:"forbidden access"});
+      }
     })
 
     app.post('/order',async(req,res)=>{
