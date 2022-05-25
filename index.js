@@ -38,6 +38,7 @@ async function run(){
     const serviceCollection=client.db('computerhub').collection('tools');
     const userCollection = client.db('computerhub').collection('users');
     const orderCollection = client.db('computerhub').collection('order');
+    const profileCollection = client.db('computerhub').collection('profile');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -169,6 +170,13 @@ async function run(){
     app.post('/order',async(req,res)=>{
       const order=req.body;
       const result=await orderCollection.insertOne(order);
+      res.send(result);
+    })
+
+    //profile
+    app.post('/profile',async(req,res)=>{
+      const profile=req.body;
+      const result=await profileCollection.insertOne(profile);
       res.send(result);
     })
 
