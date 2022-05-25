@@ -39,6 +39,7 @@ async function run(){
     const userCollection = client.db('computerhub').collection('users');
     const orderCollection = client.db('computerhub').collection('order');
     const profileCollection = client.db('computerhub').collection('profile');
+    const reviewCollection = client.db('computerhub').collection('review');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -177,6 +178,13 @@ async function run(){
     app.post('/order',async(req,res)=>{
       const order=req.body;
       const result=await orderCollection.insertOne(order);
+      res.send(result);
+    })
+
+    //review
+    app.post('/review',async(req,res)=>{
+      const review=req.body;
+      const result=await reviewCollection.insertOne(review);
       res.send(result);
     })
 
