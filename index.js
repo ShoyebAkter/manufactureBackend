@@ -153,6 +153,13 @@ async function run(){
 
     //order
 
+    app.get('/allorder',async(req,res)=>{
+      const query={};
+      const cursor=orderCollection.find(query);
+      const result=await cursor.toArray();
+      res.send(result);
+    })
+
     app.get('/order',verifyJWT, async(req,res)=>{
       const email=req.query.email;
       const decodedEmail=req.decoded.email;
@@ -178,6 +185,17 @@ async function run(){
       const profile=req.body;
       const result=await profileCollection.insertOne(profile);
       res.send(result);
+    })
+
+    app.get('/profile',verifyJWT, async(req,res)=>{
+      const email=req.query.email;
+      const decodedEmail=req.decoded.email;
+      if(email===decodedEmail)
+      {
+        const query={email:email};
+      const profile=await profileCollection.findOne(query);
+      res.send(profile);
+      }
     })
 
   }finally{
