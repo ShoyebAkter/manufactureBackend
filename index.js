@@ -197,6 +197,21 @@ async function run(){
       res.send(updatedOrder);
     })
 
+    app.get('/order/:id', verifyJWT, async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const order = await orderCollection.findOne(query);
+      res.send(order);
+    })
+
+
+    app.delete('/order/:email', verifyJWT, verifyAdmin, async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const result = await orderCollection.deleteOne(filter);
+      res.send(result);
+    })
+
 
     app.post('/create-payment-intent', verifyJWT, async(req, res) =>{
       const service = req.body;
