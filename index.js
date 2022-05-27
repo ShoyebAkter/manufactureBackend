@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 
@@ -205,9 +206,15 @@ async function run(){
     })
 
 
-    app.delete('/order/:email', verifyJWT, verifyAdmin, async (req, res) => {
+    app.delete('/order/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
       const filter = { email: email };
+      const result = await orderCollection.deleteOne(filter);
+      res.send(result);
+    })
+    app.delete('/allorder/:id', verifyJWT,verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
       const result = await orderCollection.deleteOne(filter);
       res.send(result);
     })
@@ -215,8 +222,11 @@ async function run(){
 
     app.post('/create-payment-intent', verifyJWT, async(req, res) =>{
       const service = req.body;
-      const price = service.price;
-      const amount = price*100;
+      const orderAmount=parseInt(service.quantity);
+      const price = parseInt(service.price);
+      console.log(typeof(price));
+      const amount =  price*100;
+      console.log(amount)
       const paymentIntent = await stripe.paymentIntents.create({
         amount : amount,
         currency: 'usd',
