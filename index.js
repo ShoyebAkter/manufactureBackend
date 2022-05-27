@@ -40,6 +40,7 @@ async function run(){
     const orderCollection = client.db('computerhub').collection('order');
     const profileCollection = client.db('computerhub').collection('profile');
     const reviewCollection = client.db('computerhub').collection('review');
+    const paymentCollection = client.db('computerhub').collection('payment');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -114,15 +115,14 @@ async function run(){
 
     app.put('/service/:id',async(req,res)=>{
       const id=req.params.id
-      const updatedProduct=req.body
+      const quantity=req.body.newQuantity;
       const filter ={ _id:ObjectId(id)}
-      const options = { upsert: true }
       const updatedDoc={
         $set:{
-          quantity: updatedProduct.quantity
-        }
-      }
-      const result=await serviceCollection.updateOne(filter,updatedDoc,options)
+          quantity: quantity
+        },
+      };
+      const result=await serviceCollection.updateOne(filter,updatedDoc)
       res.send(result)
     })
 
@@ -175,16 +175,52 @@ async function run(){
       }
     })
 
-    app.post('/order',async(req,res)=>{
+    app.post('/order',verifyJWT, async(req,res)=>{
       const order=req.body;
       const result=await orderCollection.insertOne(order);
       res.send(result);
     })
 
+    app.patch('/order/:id', verifyJWT, async(req, res) =>{
+      const id  = req.params.id;
+      const payment = req.body;
+      const filter = {_id: ObjectId(id)};
+      const updatedDoc = {
+        $set: {
+          paid: true,
+          transactionId: payment.transactionId
+        }
+      }
+
+      const result = await paymentCollection.insertOne(payment);
+      const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
+      res.send(updatedOrder);
+    })
+
+
+    app.post('/create-payment-intent', verifyJWT, async(req, res) =>{
+      const service = req.body;
+      const price = service.price;
+      const amount = price*100;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount : amount,
+        currency: 'usd',
+        payment_method_types:['card']
+      });
+      res.send({clientSecret: paymentIntent.client_secret})
+    });
+
     //review
     app.post('/review',async(req,res)=>{
       const review=req.body;
       const result=await reviewCollection.insertOne(review);
+      res.send(result);
+    })
+
+    app.get('/allreview',async(req,res)=>{
+      const query={};
+      const cursor=reviewCollection.find(query);
+      const result=await cursor.toArray();
       res.send(result);
     })
 
