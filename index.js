@@ -192,7 +192,7 @@ async function run(){
       const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
       res.send(updatedOrder);
     })
-
+//getting order by id
     app.get('/order/:id', verifyJWT, async(req, res) =>{
       const id = req.params.id;
       const query = {_id: ObjectId(id)};
