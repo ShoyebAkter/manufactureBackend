@@ -135,19 +135,7 @@ async function run(){
       res.send(result)
     })
 
-    // app.get('/order',verifyJWT, async(req,res)=>{
-    //   const email=req.query.email;
-    //   const decodedEmail=req.decoded.email;
-
-    //   if(user==decodedEmail){
-    //     const query={email:user};
-    //     const bookings= await orderCollection.find(query).toArray();
-    //     return res.send(bookings);
-    //   }
-    //   else{
-    //     return res.status(403).send({message:'forbidden access'});
-    //   }
-    // })
+    
 
 
 
