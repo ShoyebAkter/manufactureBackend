@@ -73,7 +73,7 @@ async function run(){
     app.delete('/service/:id',verifyJWT,verifyAdmin,async(req,res)=>{
       const id=req.params.id;
       const filter={_id:ObjectId(id)};
-      const result=await serviceCollection.deleteOne(query);
+      const result=await serviceCollection.deleteOne(filter);
       res.send(result);
     })
 
@@ -82,6 +82,12 @@ async function run(){
       res.send(users);
     });
 
+      app.get('/user/:email',async(req,res)=>{
+        const email=req.params.email;
+        const query={email:email};
+        const user=await userCollection.findOne(query);
+        res.send(user);
+      })
 
     app.put('/user/admin/:email',verifyJWT,verifyAdmin, async (req, res) => {
       const email = req.params.email;
@@ -113,6 +119,8 @@ async function run(){
       const service=await serviceCollection.findOne(query);
       res.send(service);
     })
+
+    
 
     app.put('/service/:id',async(req,res)=>{
       const id=req.params.id
@@ -189,7 +197,8 @@ async function run(){
       const updatedDoc = {
         $set: {
           paid: true,
-          transactionId: payment.transactionId
+          transactionId: payment.transactionId,
+          shipped:false
         }
       }
 
@@ -265,6 +274,19 @@ async function run(){
       const profile=await profileCollection.findOne(query);
       res.send(profile);
       }
+    })
+
+    app.put('/profile',async(req,res)=>{
+      const id=req.params.id
+      const address=req.body.address;
+      const filter ={ _id:ObjectId(id)}
+      const updatedDoc={
+        $set:{
+          address: address
+        },
+      };
+      const result=await userCollection.updateOne(filter,updatedDoc)
+      res.send(result)
     })
 
   }finally{
