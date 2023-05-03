@@ -39,6 +39,7 @@ async function run(){
     const reviewCollection = client.db('computerhub').collection('review');
     const paymentCollection = client.db('computerhub').collection('payment');
     const shopCollection = client.db('computerhub').collection('shop');
+    const categoryCollection = client.db('computerhub').collection('category');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -62,6 +63,13 @@ async function run(){
     app.post('/shop',verifyJWT,verifyAdmin,async(req,res)=>{
       const shop = req.body;
       const result = await shopCollection.insertOne(shop);
+      res.send(result);
+    })
+
+    app.get('/category',async(req,res)=>{
+      const query={};
+      const cursor=categoryCollection.find(query);
+      const result=await cursor.toArray();
       res.send(result);
     })
 
