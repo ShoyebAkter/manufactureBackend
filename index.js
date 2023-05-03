@@ -40,6 +40,7 @@ async function run(){
     const paymentCollection = client.db('computerhub').collection('payment');
     const shopCollection = client.db('computerhub').collection('shop');
     const categoryCollection = client.db('computerhub').collection('category');
+    const subCategoryCollection = client.db('computerhub').collection('subCategory');
 
 
     const verifyAdmin = async (req, res, next) => {
@@ -69,6 +70,14 @@ async function run(){
     app.get('/category',async(req,res)=>{
       const query={};
       const cursor=categoryCollection.find(query);
+      const result=await cursor.toArray();
+      res.send(result);
+    })
+    
+    
+    app.get('/subcategory',async(req,res)=>{
+      const query={};
+      const cursor=subCategoryCollection.find(query);
       const result=await cursor.toArray();
       res.send(result);
     })
