@@ -38,10 +38,8 @@ async function run(){
     const profileCollection = client.db('computerhub').collection('profile');
     const reviewCollection = client.db('computerhub').collection('review');
     const paymentCollection = client.db('computerhub').collection('payment');
-    const shopCollection = client.db('computerhub').collection('shop');
-    const categoryCollection = client.db('computerhub').collection('category');
-    const subCategoryCollection = client.db('computerhub').collection('subCategory');
-
+    const shopCollection = client.db('computerhub').collection('dokan');
+    
 
     const verifyAdmin = async (req, res, next) => {
       const requester = req.decoded.email;
@@ -61,26 +59,8 @@ async function run(){
       res.send(result);
     })
 
-    app.post('/shop',verifyJWT,verifyAdmin,async(req,res)=>{
-      const shop = req.body;
-      const result = await shopCollection.insertOne(shop);
-      res.send(result);
-    })
-
-    app.get('/category',async(req,res)=>{
-      const query={};
-      const cursor=categoryCollection.find(query);
-      const result=await cursor.toArray();
-      res.send(result);
-    })
     
     
-    app.get('/subcategory',async(req,res)=>{
-      const query={};
-      const cursor=subCategoryCollection.find(query);
-      const result=await cursor.toArray();
-      res.send(result);
-    })
 
 
     app.get('/service',async(req,res)=>{
