@@ -59,7 +59,12 @@ async function run(){
       res.send(result);
     })
 
-    
+    app.get('/shop/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:ObjectId(id)};
+      const shop=await shopCollection.findOne(query);
+      res.send(shop);
+    })
     
 
 
