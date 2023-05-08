@@ -170,11 +170,11 @@ async function run() {
     })
 
     app.get('/order', verifyJWT, async (req, res) => {
-      const userId = req.query.userId;
-      const decodedUid = req.decoded.userId;
-
-      if (userId === decodedUid) {
-        const query = { userId: userId };
+      const email = req.query.email;
+      const decodedEmail = req.decoded.email;
+      console.log(email,decodedEmail);
+      if (email === decodedEmail) {
+        const query = { email: email };
         const orders = await orderCollection.find(query).toArray();
         res.send(orders)
       }
