@@ -61,6 +61,7 @@ async function run() {
 
     app.get('/shop/:id', async (req, res) => {
       const id = req.params.id;
+      console.log(req);
       const query = { _id: ObjectId(id) };
       const shop = await shopCollection.findOne(query);
       res.send(shop);
@@ -170,11 +171,11 @@ async function run() {
     })
 
     app.get('/order', verifyJWT, async (req, res) => {
-      const email = req.query.email;
-      const decodedEmail = req.decoded.email;
-      console.log(email,decodedEmail);
-      if (email === decodedEmail) {
-        const query = { email: email };
+      const userId = req.query.userId;
+      // const decodedEmail = req.decoded.email;
+      console.log(req);
+      if (userId) {
+        const query = { userId: userId };
         const orders = await orderCollection.find(query).toArray();
         res.send(orders)
       }
@@ -301,5 +302,6 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
+  // console.log(email,decodedEmail);
   console.log(`Computerhub listening on port ${port}`)
 })
