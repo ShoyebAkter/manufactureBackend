@@ -170,20 +170,20 @@ async function run() {
       res.send(result);
     })
 
-    // app.get('/order', verifyJWT, async (req, res) => {
-    //   const userId = req.query.userId;
-    //   // const decodedEmail = req.decoded.email;
-    //   // console.log(req);
-    //   if (!userId) {
-    //     return res.status(403).send({ message: "forbidden access" });
-    //   }
-    //   else {
-    //     const query = { userId: userId };
-    //     const orders = await orderCollection.find(query).toArray();
-    //     res.send(orders)
+    app.get('/order', verifyJWT, async (req, res) => {
+      const userId = req.query.userId;
+      // const decodedEmail = req.decoded.email;
+      // console.log(req);
+      if (!userId) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      else {
+        const query = { userId: userId };
+        const orders = await orderCollection.find(query).toArray();
+        res.send(orders)
         
-    //   }
-    // })
+      }
+    })
 
     app.post('/order', async (req, res) => {
       const order = req.body;
