@@ -67,15 +67,15 @@ async function run() {
       res.send(shop);
     })
 
-    app.post('/shop/:id', verifyJWT, verifyAdmin, async (req, res) => {
-      const id=req.params.id;
-      const service = req.body;
-      const result = await shopCollection.updateOne(
-        {subId:id},
-        {$push:{products:service}}
-      );
-      res.send(result);
-    })
+    // app.post('/shop/:id', verifyJWT, verifyAdmin, async (req, res) => {
+    //   const id=req.params.id;
+    //   const service = req.body;
+    //   const result = await shopCollection.updateOne(
+    //     {subId:id},
+    //     {$push:{products:service}}
+    //   );
+    //   res.send(result);
+    // })
 
 
     app.get('/service', async (req, res) => {
