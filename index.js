@@ -67,6 +67,15 @@ async function run() {
       res.send(shop);
     })
 
+    app.post('/shop/:id', verifyJWT, verifyAdmin, async (req, res) => {
+      const id=req.params.id;
+      const service = req.body;
+      const result = await shopCollection.updateOne(
+        {subId:id},
+        {$push:{products:service}}
+      );
+      res.send(result);
+    })
 
 
     app.get('/service', async (req, res) => {
@@ -76,11 +85,7 @@ async function run() {
       res.send(result);
     })
 
-    app.post('/service', verifyJWT, verifyAdmin, async (req, res) => {
-      const service = req.body;
-      const result = await serviceCollection.insertOne(service);
-      res.send(result);
-    })
+    
 
     app.delete('/service/:id', verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
