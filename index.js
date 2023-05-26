@@ -87,70 +87,70 @@ async function run() {
 
     
 
-    app.delete('/service/:id', verifyJWT, verifyAdmin, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await serviceCollection.deleteOne(filter);
-      res.send(result);
-    })
+    // app.delete('/service/:id', verifyJWT, verifyAdmin, async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: ObjectId(id) };
+    //   const result = await serviceCollection.deleteOne(filter);
+    //   res.send(result);
+    // })
 
-    app.get('/user', verifyJWT, async (req, res) => {
-      const users = await userCollection.find().toArray();
-      res.send(users);
-    });
+    // app.get('/user', verifyJWT, async (req, res) => {
+    //   const users = await userCollection.find().toArray();
+    //   res.send(users);
+    // });
 
-    app.get('/user/:email', async (req, res) => {
-      const email = req.params.email;
-      const query = { email: email };
-      const user = await userCollection.findOne(query);
-      res.send(user);
-    })
+    // app.get('/user/:email', async (req, res) => {
+    //   const email = req.params.email;
+    //   const query = { email: email };
+    //   const user = await userCollection.findOne(query);
+    //   res.send(user);
+    // })
 
-    app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
-      const email = req.params.email;
+    // app.put('/user/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
+    //   const email = req.params.email;
 
-      const filter = { email: email };
-      const updateDoc = {
-        $set: { role: 'admin' },
-      };
-      const result = await userCollection.updateOne(filter, updateDoc);
-      res.send(result);
-    })
+    //   const filter = { email: email };
+    //   const updateDoc = {
+    //     $set: { role: 'admin' },
+    //   };
+    //   const result = await userCollection.updateOne(filter, updateDoc);
+    //   res.send(result);
+    // })
 
-    app.put('/user/:email', async (req, res) => {
-      const email = req.params.email;
-      const user = req.body;
-      const filter = { email: email };
-      const options = { upsert: true };
-      const updateDoc = {
-        $set: user,
-      }
-      const result = await userCollection.updateOne(filter, updateDoc, options);
-      const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
-      res.send({ result, token });
-    })
+    // app.put('/user/:email', async (req, res) => {
+    //   const email = req.params.email;
+    //   const user = req.body;
+    //   const filter = { email: email };
+    //   const options = { upsert: true };
+    //   const updateDoc = {
+    //     $set: user,
+    //   }
+    //   const result = await userCollection.updateOne(filter, updateDoc, options);
+    //   const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
+    //   res.send({ result, token });
+    // })
 
-    app.get('/service/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const service = await serviceCollection.findOne(query);
-      res.send(service);
-    })
+    // app.get('/service/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const service = await serviceCollection.findOne(query);
+    //   res.send(service);
+    // })
 
 
 
-    app.put('/service/:id', async (req, res) => {
-      const id = req.params.id
-      const quantity = req.body.newQuantity;
-      const filter = { _id: ObjectId(id) }
-      const updatedDoc = {
-        $set: {
-          quantity: quantity
-        },
-      };
-      const result = await serviceCollection.updateOne(filter, updatedDoc)
-      res.send(result)
-    })
+    // app.put('/service/:id', async (req, res) => {
+    //   const id = req.params.id
+    //   const quantity = req.body.newQuantity;
+    //   const filter = { _id: ObjectId(id) }
+    //   const updatedDoc = {
+    //     $set: {
+    //       quantity: quantity
+    //     },
+    //   };
+    //   const result = await serviceCollection.updateOne(filter, updatedDoc)
+    //   res.send(result)
+    // })
 
 
 
@@ -221,78 +221,78 @@ async function run() {
     })
 
     //delete
-    app.delete('/order/:email', verifyJWT, async (req, res) => {
-      const email = req.params.email;
-      const filter = { email: email };
-      const result = await orderCollection.deleteOne(filter);
-      res.send(result);
-    })
-    app.delete('/allorder/:id', verifyJWT, verifyAdmin, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await orderCollection.deleteOne(filter);
-      res.send(result);
-    })
+    // app.delete('/order/:email', verifyJWT, async (req, res) => {
+    //   const email = req.params.email;
+    //   const filter = { email: email };
+    //   const result = await orderCollection.deleteOne(filter);
+    //   res.send(result);
+    // })
+    // app.delete('/allorder/:id', verifyJWT, verifyAdmin, async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: ObjectId(id) };
+    //   const result = await orderCollection.deleteOne(filter);
+    //   res.send(result);
+    // })
 
 
-    app.post('/create-payment-intent', verifyJWT, async (req, res) => {
-      const service = req.body;
-      const orderAmount = parseInt(service.quantity);
-      const price = parseInt(service.price);
-      console.log(typeof (price));
-      const amount = price * 100;
-      console.log(amount)
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount,
-        currency: 'usd',
-        payment_method_types: ['card']
-      });
-      res.send({ clientSecret: paymentIntent.client_secret })
-    });
+    // app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+    //   const service = req.body;
+    //   const orderAmount = parseInt(service.quantity);
+    //   const price = parseInt(service.price);
+    //   console.log(typeof (price));
+    //   const amount = price * 100;
+    //   console.log(amount)
+    //   const paymentIntent = await stripe.paymentIntents.create({
+    //     amount: amount,
+    //     currency: 'usd',
+    //     payment_method_types: ['card']
+    //   });
+    //   res.send({ clientSecret: paymentIntent.client_secret })
+    // });
 
     //review
-    app.post('/review', async (req, res) => {
-      const review = req.body;
-      const result = await reviewCollection.insertOne(review);
-      res.send(result);
-    })
+    // app.post('/review', async (req, res) => {
+    //   const review = req.body;
+    //   const result = await reviewCollection.insertOne(review);
+    //   res.send(result);
+    // })
 
-    app.get('/allreview', async (req, res) => {
-      const query = {};
-      const cursor = reviewCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result);
-    })
+    // app.get('/allreview', async (req, res) => {
+    //   const query = {};
+    //   const cursor = reviewCollection.find(query);
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // })
 
     //profile
-    app.post('/profile', async (req, res) => {
-      const profile = req.body;
-      const result = await profileCollection.insertOne(profile);
-      res.send(result);
-    })
+    // app.post('/profile', async (req, res) => {
+    //   const profile = req.body;
+    //   const result = await profileCollection.insertOne(profile);
+    //   res.send(result);
+    // })
 
-    app.get('/profile', verifyJWT, async (req, res) => {
-      const email = req.query.email;
-      const decodedEmail = req.decoded.email;
-      if (email === decodedEmail) {
-        const query = { email: email };
-        const profile = await profileCollection.findOne(query);
-        res.send(profile);
-      }
-    })
+    // app.get('/profile', verifyJWT, async (req, res) => {
+    //   const email = req.query.email;
+    //   const decodedEmail = req.decoded.email;
+    //   if (email === decodedEmail) {
+    //     const query = { email: email };
+    //     const profile = await profileCollection.findOne(query);
+    //     res.send(profile);
+    //   }
+    // })
 
-    app.put('/profile', async (req, res) => {
-      const id = req.params.id
-      const address = req.body.address;
-      const filter = { _id: ObjectId(id) }
-      const updatedDoc = {
-        $set: {
-          address: address
-        },
-      };
-      const result = await userCollection.updateOne(filter, updatedDoc)
-      res.send(result)
-    })
+    // app.put('/profile', async (req, res) => {
+    //   const id = req.params.id
+    //   const address = req.body.address;
+    //   const filter = { _id: ObjectId(id) }
+    //   const updatedDoc = {
+    //     $set: {
+    //       address: address
+    //     },
+    //   };
+    //   const result = await userCollection.updateOne(filter, updatedDoc)
+    //   res.send(result)
+    // })
 
   } finally {
 
